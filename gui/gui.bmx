@@ -4,7 +4,7 @@ SuperStrict
 Import brl.standardio
 Import brl.event
 
-piGadget.EnableGadgets()
+piGadget.EnableGadgetInput()
 
 Rem
 bbdoc: piEvent, heirarchal event class.
@@ -38,23 +38,37 @@ Type piEvent
 	Field x:Int, y:Int
 	
 	Rem
+	bbdoc: Numeric event data
+	EndRem
+	Field data:Int
+	
+	Rem
 	bbdoc: Arbitrary event data.
 	EndRem
-	Field data:Object
+	Field extra:Object
 	
 	Rem
 	bbdoc: Create a new piEvent and set all of its data.
 	EndRem
-	Function Create:piEvent(id:Int, source:Object, data:Object, x:Int = 0, y:Int = 0)
+	Function Create:piEvent(id:Int, source:Object, data:Int = 0, extra:Object = Null, x:Int = 0, y:Int = 0)
 		Local n:piEvent = New piEvent
 		n.id = id
 		n.source = source
 		n.origin = source
 		n.data = data
+		n.extra = extra
 		n.x = x
 		n.y = y
+		Return n
 	EndFunction
 
+	Rem
+	bbdoc: Create a new piEvent from a TEvent
+	EndRem
+	Function CreateFromTEvent:piEvent(evt:TEvent)
+		Return piEvent.Create(evt.id, evt.source, evt.data, evt.extra, evt.x, evt.y)
+	End Function
+	
 	Rem
 	bbdoc: Create a copy of this piEvent with a new source.
 	EndRem
@@ -62,6 +76,7 @@ Type piEvent
 		Local n:piEvent = Self.Duplicate()
 		n.parent = Self
 		n.source = source
+		Return n
 	End Method
 	
 	Rem
@@ -73,8 +88,10 @@ Type piEvent
 		n.source = source
 		n.origin = origin
 		n.parent = parent
+		n.extra = extra
 		n.x = x
 		n.y = y
+		Return n
 	End Method
 	
 End Type
@@ -84,15 +101,22 @@ bbdoc: Base class for objects designed to send piEvent callbacks.
 EndRem
 Type piCallbackHandler
 
-	Field _EventCallback:Int(event:TEvent, context:piCallbackHandler)
+	Field _EventCallback:Int(event:piEvent, context:Object)
+	Field _EventContext:Object
 
 	Rem
 	bbdoc: Set the function which will be called when this object emits events.
 	EndRem
-	Method SetCallback(callback:Int(event:TEvent, context:piCallbackHandler))
+	Method SetCallback(callback:Int(event:piEvent, context:Object), context:Object)
 		_EventCallback = callback
+		_EventContext = context
 	End Method
-
+	
+	Method CallCallback(evt:piEvent)
+		If (_EventCallback)
+			_EventCallback(evt, _EventContext)
+		EndIf
+	End Method
 EndType
 
 Rem
@@ -149,28 +173,31 @@ Type piGadget Extends piCallbackHandler
 				Case EVENT_MOUSEMOVE
 					If ((m) And Not b.GetMouseIn())
 						b._MouseIn = True
-						b.TriggerEvent(EVENT_MOUSEENTER, evt)
+						b.TriggerTEvent(EVENT_MOUSEENTER, evt)
 					EndIf
 					If ((Not m) And b.GetMouseIn())
 						b._MouseIn = False
-						b.TriggerEvent(EVENT_MOUSELEAVE, evt)
+						b.TriggerTEvent(EVENT_MOUSELEAVE, evt)
 					EndIf
 					If (m)
 						b.OnMouseMove(evt)
 					EndIf
 				Case EVENT_MOUSEDOWN
 					If (m)
-						b.TriggerEvent(EVENT_MOUSEDOWN, evt)
+						b.TriggerTEvent(EVENT_MOUSEDOWN, evt)
 						b._MouseDown = 1
 						b.OnMouseDown(evt)
 					End If
 					
 				Case EVENT_MOUSEUP
 					If (m)
-						b.TriggerEvent(EVENT_MOUSEUP, evt)
+						b.TriggerTEvent(EVENT_MOUSEUP, evt)
 						b.OnMouseUp(evt)
 					End If
 					b._MouseDown = 0
+					
+				Case EVENT_KEYDOWN
+					b.OnKeyDown(evt)
 
 			End Select
 
@@ -180,13 +207,12 @@ Type piGadget Extends piCallbackHandler
 		
 	EndFunction
 	
-	Method TriggerEvent(id:Int, evt:TEvent)
-		Local emit:TEvent = TEvent.Create(id, Self, evt.data, evt.mods, evt.x, evt.y, evt.extra)
-	'	EmitEvent(emit)
-		If (_EventCallback) _EventCallback(emit, Self)
-	
+	Method TriggerTEvent(id:Int, evt:TEvent)
+		If (_EventCallback)
+			Local emit:piEvent = piEvent.Create(id, Self, evt.data, evt.extra, evt.x, evt.y)
+			 CallCallback(emit)
+		EndIf
 	End Method
-	
 	
 	Rem
 	bbdoc: Check if the mouse is inside this gadget.
@@ -203,9 +229,13 @@ Type piGadget Extends piCallbackHandler
 	EndMethod
 	
 '#Region Abstract
-	Method TestPosition:Int(x:Int, y:Int) Abstract
+	Method TestPosition:Int(x:Int, y:Int)
 	
-	Method Render() Abstract
+	EndMethod
+	
+	Method Render()
+	
+	EndMethod
 	
 	Method OnMouseDown(evt:TEvent)
 		
@@ -216,6 +246,10 @@ Type piGadget Extends piCallbackHandler
 	End Method
 	
 	Method OnMouseMove(evt:TEvent)
+		
+	End Method
+	
+	Method OnKeyDown(evt:TEvent)
 		
 	End Method
 '#End Region 
