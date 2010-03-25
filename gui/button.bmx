@@ -10,6 +10,9 @@ Type piButton Extends piRectGadget
 	Field _text:String = "button"
 	Field _textcol:TColour = TColour.Black()
 	Field _backcol:TColour = TColour.Grey()
+	Field _flashcol:TColour = TColour.Red()
+	
+	Field flashtime:Int = 0
 	
 	
 	Method Render()
@@ -21,6 +24,8 @@ Type piButton Extends piRectGadget
 		If GetMouseDown()
 			_backcol.Lighter(40).Set()
 		End If
+		If MilliSecs() < flashtime _flashcol.Set()
+			
 		DrawRect(_x, _y, _w, _h)
 		
 		_textcol.Set()
@@ -29,12 +34,20 @@ Type piButton Extends piRectGadget
 		
 	End Method
 	
+	Method Flash()
+		flashtime = MilliSecs() + 300
+	End Method
+	
 	Method OnMouseDown(evt:TEvent)
-		TriggerEvent(EVENT_GADGETACTION, evt)
+		TriggerTEvent(EVENT_GADGETACTION, evt)
 	End Method
 	
 	Method SetText(text:String)
 		_text = Text
+	End Method
+	
+	Method GetText:String()
+		Return _text
 	End Method
 	
 End Type
