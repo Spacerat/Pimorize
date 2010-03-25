@@ -1,22 +1,16 @@
 
 SuperStrict
 
-Import "memorygame.bmx"
-Import "numpad.bmx"
+Import "pigame.bmx"
 
 Graphics 300, 400
 
-Local g:TMemoryGame = New TMemoryGame
-g.InitPi()
-
-New piNumpad.Init(0, 0, 300, 400)
-
+Local game:piGame = New piGame.InitGame()
+SetClsColor(255,255,255)
 While Not AppTerminate()
-	
 	Cls
 
-	piGadget.RenderAll()
-
-
+	game.Run()
+	
 	Flip
 WEnd
