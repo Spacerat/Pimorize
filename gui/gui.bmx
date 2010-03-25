@@ -79,28 +79,42 @@ Type piEvent
 	
 End Type
 
+Rem
+bbdoc: Base class for objects designed to send piEvent callbacks.
+EndRem
 Type piCallbackHandler
 
 	Field _EventCallback:Int(event:TEvent, context:piCallbackHandler)
 
+	Rem
+	bbdoc: Set the function which will be called when this object emits events.
+	EndRem
 	Method SetCallback(callback:Int(event:TEvent, context:piCallbackHandler))
 		_EventCallback = callback
 	End Method
 
 EndType
 
+Rem
+bbdoc: Base gadget class.
+EndRem
 Type piGadget Extends piCallbackHandler
 	
 	Global _gadgets:TList = New TList
 	Field _MouseIn:Int = 0
 	Field _MouseDown:Int = 0
 	
-
-	Function EnableGadgets()
+	Rem
+	bbdoc: Enable input to all gadgets.
+	EndRem
+	Function EnableGadgetInput()
 		AddHook(EmitEventHook, piGadget.GadgetHook)
 	End Function
 	
-	Function DisableGadgets()
+	Rem
+	bbdoc: Disable input to all gadgets.
+	EndRem
+	Function DisableGadgetInput()
 		RemoveHook(EmitEventHook, piGadget.GadgetHook)
 	End Function
 	
@@ -108,10 +122,16 @@ Type piGadget Extends piCallbackHandler
 		_gadgets.AddLast(Self)
 	End Method
 	
+	Rem
+	bbdoc: Remove this gadget.
+	Endrem
 	Method Remove()
 		_gadgets.Remove(Self)
 	End Method	
 	
+	Rem
+	bbdoc: Render all created gadgets.
+	EndRem
 	Function RenderAll()
 		For Local g:piGadget = EachIn _gadgets
 			g.Render()
@@ -167,10 +187,17 @@ Type piGadget Extends piCallbackHandler
 	
 	End Method
 	
+	
+	Rem
+	bbdoc: Check if the mouse is inside this gadget.
+	EndRem
 	Method GetMouseIn:Int()
 		Return _MouseIn
 	End Method
 	
+	Rem
+	bbdoc: Check if the mouse is being held on this gadget.
+	Endrem
 	Method GetMouseDown:Int()
 		Return _MouseDown
 	EndMethod
