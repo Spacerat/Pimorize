@@ -61,16 +61,27 @@ Type piNumpad Extends piGadget
 	
 	Method OnKeyDown(evt:TEvent)
 		
-		If evt.data = 190 Or evt.data = 110
-			buttons[10].OnMouseDown(evt)
+		Local d:Int = evt.data
+	
+		If d = 190 Or d = 110
+			PressButton(10, evt)
 			Return
 		End If
 	
-		If evt.data - 49 < 10 And evt.data - 49 >= 0 evt.data:-48
-		If evt.data - 97 < 10 And evt.data - 97 >= 0 evt.data:-96
-		If evt.data > 0 And evt.data < 10
-			buttons[evt.data].OnMouseDown(evt)
-			buttons[evt.data].Flash()
+		If d - 49 < 10 And d - 49 >= - 1 d:-48
+		If d - 97 < 10 And d - 97 >= - 1 d:-96
+		If d >= 0 And d < 10
+			PressButton(d, evt)
+		EndIf
+	End Method
+	
+	Method PressButton(num:Int, evt:TEvent = Null)
+		If evt = Null
+			evt = TEvent.Create(EVENT_GADGETACTION, Self, num)
+		End If
+		If num >= 0 And num < 11
+			buttons[num].OnMouseDown(evt)
+			buttons[num].Flash()
 		EndIf
 	End Method
 
