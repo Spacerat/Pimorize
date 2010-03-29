@@ -3,6 +3,7 @@ SuperStrict
 
 Import brl.oggloader
 Import brl.ramstream
+Import brl.audio
 
 Rem
 bbdoc: Digit audio class
