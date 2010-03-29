@@ -1,8 +1,8 @@
 
 SuperStrict
 
-Import brl.standardio
 Import brl.event
+Import brl.linkedlist
 
 piGadget.EnableGadgetInput()
 
