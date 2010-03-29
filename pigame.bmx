@@ -36,18 +36,18 @@ Type piGame Extends TMemoryGame
 	
 	Field _font:TImageFont
 	
-	Method InitGame:piGame(str:String = piString, start:Int = 3)
+	Method Init(str:String = piString, start:Int = 3)
 		
-		Init(str, start)
+		Super.Init(str, start)
 		_previewto = start
 		w = GraphicsWidth()
 		h = GraphicsHeight()
 		numpad = New piNumpad.Init(0, 0, w, h)
 		numpad.SetCallback(PadCallback, Self)
 		speaker.LoadSounds("Sound", "ogg")
-		_font = LoadImageFont("DroidSans-Bold.ttf", h / 6)
+		_font = LoadImageFont("incbin::DroidSans-Bold.ttf", h / 6)
 		If (_font) numpad.SetFont(_font)
-		Return Self
+
 	End Method
 	
 	Method Run()
@@ -61,7 +61,7 @@ Type piGame Extends TMemoryGame
 				numpad.PressButton(Int(Chr(_memstring[_previewindex])))
 			EndIf
 			
-			_previewtime = MilliSecs() + 300
+			_previewtime = MilliSecs() + 200 * (1 - Float(_previewto - _previewindex) / _previewto) + 150
 			_previewindex:+1
 			If _previewindex >= _previewto _previewto = -1
 		EndIf
