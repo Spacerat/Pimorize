@@ -2,12 +2,12 @@
 SuperStrict
 
 Import brl.oggloader
-'Import brl.openalaudio
-'Import brl.freeaudioaudio
 Import "memorygame.bmx"
 Import "numpad.bmx"
 Import "numbersounds.bmx"
 Import joe.snarl
+Import brl.freetypefont
+Import brl.directsoundaudio
 
 Rem
 Incbin "Sound/1.ogg"
@@ -34,14 +34,19 @@ Type piGame Extends TMemoryGame
 	Field _previewto:Int = 3
 	Field _previewtime:Int = 0
 	
-	Method InitGame:piGame()
+	Field _font:TImageFont
+	
+	Method InitGame:piGame(str:String = piString, start:Int = 3)
 		
-		Init(piString, 3)
+		Init(str, start)
+		_previewto = start
 		w = GraphicsWidth()
 		h = GraphicsHeight()
 		numpad = New piNumpad.Init(0, 0, w, h)
 		numpad.SetCallback(PadCallback, Self)
 		speaker.LoadSounds("Sound", "ogg")
+		_font = LoadImageFont("DroidSans-Bold.ttf", h / 6)
+		If (_font) numpad.SetFont(_font)
 		Return Self
 	End Method
 	
@@ -61,14 +66,22 @@ Type piGame Extends TMemoryGame
 			If _previewindex >= _previewto _previewto = -1
 		EndIf
 		
+		SetImageFont(_font)
+		
 	End Method
 	
 	Method NextLevel()
-	'	DebugStop
+	
 		_previewto = _lastindex
 		_previewindex = 0
-		_previewtime = MilliSecs() + 300
+		_previewtime = MilliSecs() + 400
 		
+	End Method
+	
+	Method Fail()
+		_previewto = _lastindex
+		_previewindex = 0
+		_previewtime = MilliSecs() + 400		
 	End Method
 	
 	Function PadCallback(evt:piEvent, context:Object)
