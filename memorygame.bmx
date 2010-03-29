@@ -1,21 +1,26 @@
 
 SuperStrict
 
-Import brl.standardio
-
+Rem
+bbdoc: Base memory game class
+about: This class contains the logic for memory games. It is then left to a sub-class to impliment an interface.
+EndRem
 Type TMemoryGame
 
 	Field _memstring:String
 	Field _lastindex:Int
 	Field _index:Int = 0
 	
+	Rem
+	bbdoc: Initialise the game with a string, at a position.
+	EndRem
 	Method Init(str:String, start:Int)
 		_memstring = str
 		_lastindex = start
 	End Method
 
 	Method NextChar(key:Int)
-		Print _memstring[_index] + "(" + Chr(_memstring[_index]) + ") = " + key + "(" + Chr(key) + ")"
+	
 		If _memstring[_index] = key
 			If _index + 1 = _lastindex
 				_lastindex:+1
@@ -29,8 +34,6 @@ Type TMemoryGame
 			_index = 0
 			Fail()
 		EndIf
-		Print "i: " + _index
-		Print "l: " + _lastindex
 		
 	End Method
 	
