@@ -41,8 +41,6 @@ Type piNumpad Extends piGadget
 		Return Self
 	EndMethod
 	
-	
-	
 	Function ButtonCallback(event:piEvent, context:Object)
 		If Not piButton(event.origin) Return
 		Local b:piButton = piButton(event.origin)
@@ -85,5 +83,11 @@ Type piNumpad Extends piGadget
 		EndIf
 	End Method
 
+	Method SetFont(font:TImageFont)
+		For Local b:piButton = EachIn buttons
+			b.SetFont(font)
+		Next
+	End Method
+	
 End Type
 
