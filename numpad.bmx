@@ -12,7 +12,7 @@ Type piNumpad Extends piGadget
 		Local n:Int = 1
 		Local bw:Float = w / 3.0	'Button width
 		Local bh:Float = h / 4.0	'Button height
-		Local bs:Float = 1			'Border size
+		Local bs:Float = 0			'Border size
 		
 		For Local yy:Int = 2 To 0 Step - 1
 			For Local xx:Int = 0 To 2
@@ -41,6 +41,24 @@ Type piNumpad Extends piGadget
 		Return Self
 	EndMethod
 	
+	Method SetPosition(x:Int, y:Int)
+		Local _x:Int = buttons[7].GetX()
+		Local _y:Int = buttons[7].GetY()
+		
+		For Local b:piButton = EachIn Buttons
+			b.SetPosition(b.GetX() + (x - _x), b.GetY() + (y - _y))
+		Next
+		
+	End Method
+	
+	Method GetX:Int()
+		Return buttons[7].GetX()
+	End Method
+
+	Method GetY:Int()
+		Return buttons[7].GetY()
+	End Method	
+		
 	Function ButtonCallback(event:piEvent, context:Object)
 		If Not piButton(event.origin) Return
 		Local b:piButton = piButton(event.origin)
