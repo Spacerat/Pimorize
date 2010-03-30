@@ -9,7 +9,7 @@ Type piButton Extends piRectGadget
 	
 	Field _text:String = "button"
 	Field _textcol:TColour = TColour.Black(0.7)
-	Field _backcol:TColour = TColour.Grey()
+	Field _backcol:TColour = TColour.Grey().Lighter(60)
 	Field _flashcol:TColour = TColour.Red()
 	Field _font:TImageFont
 	
@@ -52,7 +52,7 @@ Type piButton Extends piRectGadget
 		
 		_textcol.Set()
 		
-		If (_font) Setfont(_font)
+		If (_font) SetImageFont(_font)
 		
 		DrawTextCentred(_text, _x + _w / 2 + GetMouseDown(), + _y + _h / 2 + GetMouseDown(), True, True)
 		
