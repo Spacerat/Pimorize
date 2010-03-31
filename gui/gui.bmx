@@ -40,7 +40,7 @@ Type piEvent
 	Rem
 	bbdoc: Numeric event data
 	EndRem
-	Field data:Int
+	Field data:Float
 	
 	Rem
 	bbdoc: Arbitrary event data.
@@ -50,7 +50,7 @@ Type piEvent
 	Rem
 	bbdoc: Create a new piEvent and set all of its data.
 	EndRem
-	Function Create:piEvent(id:Int, source:Object, data:Int = 0, extra:Object = Null, x:Int = 0, y:Int = 0)
+	Function Create:piEvent(id:Int, source:Object, data:Float = 0, extra:Object = Null, x:Int = 0, y:Int = 0)
 		Local n:piEvent = New piEvent
 		n.id = id
 		n.source = source
