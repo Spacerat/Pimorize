@@ -161,7 +161,16 @@ Type piGadget Extends piCallbackHandler
 			g.Render()
 		Next
 	End Function
-	
+
+	Rem
+	bbdoc: Render all created gadgets.
+	EndRem
+	Function UpdateAll()
+		For Local g:piGadget = EachIn _gadgets
+			g.Update()
+		Next
+	End Function	
+		
 	Function GadgetHook:Object(id:Int, data:Object, context:Object)
 		
 		Local evt:TEvent = TEvent(data)
@@ -236,6 +245,10 @@ Type piGadget Extends piCallbackHandler
 	Method Render()
 	
 	EndMethod
+	
+	Method Update()
+		
+	End Method
 	
 	Method OnMouseDown(evt:TEvent)
 		
