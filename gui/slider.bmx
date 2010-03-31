@@ -3,7 +3,6 @@ SuperStrict
 
 Import "rectgadget.bmx"
 Import joe.colour
-Import brl.standardio
 
 Type piSlider Extends piRectGadget
 	
@@ -13,7 +12,7 @@ Type piSlider Extends piRectGadget
 	Field _sliderpos:Float = 0
 	Field _orient:Int
 	Field _backcol:TColour = TColour.Black()
-	Field _knobcol:TColour = TColour.Blue()
+	Field _knobcol:TColour = TColour.Gray(0.8)
 	
 	Method CreateSlider:piSlider(x:Int, y:Int, w:Int, h:Int, orient:Int)
 		SetPosition(x, y)
@@ -51,11 +50,15 @@ Type piSlider Extends piRectGadget
 
 	Method Update()
 		If GetMouseDown()
+			Local pv:Float = _sliderpos
 			If _orient = HORIZONTAL
 				SetSliderPercentage(Float(MouseX() - _x) / _w)
 			Else
 				SetSliderPercentage(Float(MouseY() - _y) / _h)
 			EndIf
+			If pv <> _sliderpos
+				CallCallback(New piEvent.Create(EVENT_GADGETACTION, Self, GetSliderPercentage(),, MouseX(), MouseY()))
+			End If
 		End If		
 	EndMethod
 	
@@ -65,6 +68,14 @@ Type piSlider Extends piRectGadget
 	
 	Method GetOrient:Int()
 		Return _orient
+	End Method
+	
+	Method GetSliderPercentage:Float()
+		If _orient = HORIZONTAL
+			Return _sliderpos
+		Else
+			Return 1 - _sliderpos
+		End If
 	End Method
 	
 	Method SetSliderPercentage(v:Float)
