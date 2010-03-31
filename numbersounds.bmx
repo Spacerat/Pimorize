@@ -32,7 +32,7 @@ Type TDigitSpeaker
 	Method PlayDigit(digit:Int, channel:TChannel = Null)
 		If digit < 0 Return
 		If digit >= 10
-			If (point) PlaySound(point)
+			If (point) PlaySound(point,channel)
 		ElseIf (numbers[digit])
 			PlaySound(numbers[digit], channel)
 		End If
