@@ -20,7 +20,7 @@ Local start:Int = Int(IniLoadDef(ini, "Game", "Start", "3"))
 Local swidth:Int = Int(IniLoadDef(ini, "Window", "Width", "500"))
 Local sheight:Int = Int(IniLoadDef(ini, "Window", "Height", "400"))
 Local fullscr:Int = Int(IniLoadDef(ini, "Window", "Fullscreen", "0"))
-Local x:Int = Int(IniLoadDef(ini, "Window", "X", "15"))
+Local x:Int = Int(IniLoadDef(ini, "Window", "X", "8"))
 ini.Save(True)
 
 'Start the graphics window
