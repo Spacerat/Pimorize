@@ -2,7 +2,7 @@
 SuperStrict
 
 Import "rectgadget.bmx"
-Import "drawcentredtext.bmx"
+Import joe.advtext
 Import joe.colour
 
 Type piButton Extends piRectGadget

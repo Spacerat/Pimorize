@@ -5,12 +5,12 @@ Import brl.oggloader
 Import "memorygame.bmx"
 Import "numpad.bmx"
 Import "numbersounds.bmx"
-Import "gui\drawcentredtext.bmx"
 Import "gui\slider.bmx"
 Import brl.freetypefont
 Import brl.directsoundaudio
 Import brl.pngloader
 Import brl.ramstream
+Import joe.advtext
 
 Rem
 Incbin "Sound/1.ogg"
@@ -59,6 +59,7 @@ Type piGame Extends TMemoryGame
 	
 	Field _bigfont:TImageFont
 	Field _smallfont:TImageFont
+	Field _tinyfont:TImageFont
 	Field _shadowimg:TImage = LoadImage("incbin::Img/shadow.png")
 	Field _speakerimg:TImage[4]
 	Field _speedimg:TImage[4]
@@ -75,14 +76,14 @@ Type piGame Extends TMemoryGame
 		
 		_volumeslider = New piSlider.CreateSlider(w + w * (1 / 5.0), h / 2.4, 20, h / 2.5, piSlider.VERTICAL)
 		_volumeslider.SetCallback(SliderCallback, Self)
+		SetVolume(_volume)
 		_speedslider = New piSlider.CreateSlider(w + w * (2 / 5.0), h / 2.4, 20, h / 2.5, piSlider.VERTICAL)
 		_speedslider.SetCallback(SliderCallback, Self)
-		_speedslider.SetSliderPercentage(0.5)
-		
+		SetSpeedMulti(_speedmulti)
 		_speaker.LoadSounds("Sound", "ogg")
 		_bigfont = LoadImageFont("incbin::DroidSans-Bold.ttf", h / 6.0)
 		_smallfont = LoadImageFont("incbin::DroidSans-Bold.ttf", h / 12.0)
-		
+		_tinyfont = LoadImageFont("incbin::DroidSans-Bold.ttf", 10)
 		For Local i:Int = 0 To 3
 			_speakerimg[i] = LoadImage("incbin::Img/speaker-" + i + ".png")
 			_speakerimg[i].handle_x = _speakerimg[i].width / 2
@@ -99,12 +100,10 @@ Type piGame Extends TMemoryGame
 	Method Run()
 		'''UPDATE'''
 		If KeyDown(KEY_RIGHT)
-			x:+1
-			numpad.SetPosition(numpad.GetX() + 1, numpad.GetY())
+			SetX(x + 1)
 		EndIf
 		If KeyDown(KEY_LEFT)
-			x:-1
-			numpad.SetPosition(numpad.GetX() - 1, numpad.GetY())
+			SetX(x - 1)
 		EndIf
 		
 		piGadget.UpdateAll()
@@ -149,11 +148,15 @@ Type piGame Extends TMemoryGame
 		SetScale(GraphicsWidth() / 700.0, GraphicsHeight() / 600.0)
 		Local n:Int = Ceil(_volume * 3)
 		DrawImage(_speakerimg[n], _volumeslider.GetX() + _volumeslider.GetWidth() / 2, _volumeslider.GetY() - _volumeslider.GetWidth() / 2)
-		Local s:Int = 3-_speedmulti
+		Local s:Int = 3 - _speedmulti
 		If KeyHit(KEY_SPACE) DebugStop
 		DrawImage(_speedimg[s], _speedslider.GetX() + _volumeslider.GetWidth() / 2, _volumeslider.GetY() - _volumeslider.GetWidth() / 2)
 		SetScale(1, 1)
 		
+		'About text
+		SetImageFont(_tinyfont)
+		SetColor(200, 200, 200)
+		joe.advtext.DrawParsedText("<gray>PiMorize<colour=default>by Joseph <gray>'Spacerat'<colour=default> Atkins-Turkish", w + x + 20, h - 30, GraphicsWidth() - w - x - 40)
 	End Method
 	
 	Method NextLevel()
@@ -182,20 +185,29 @@ Type piGame Extends TMemoryGame
 		EndIf		
 	End Method
 	
-	Function PadCallback(evt:piEvent, context:Object)
-		Local g:piGame = piGame(context)
-		g.PadEvent(evt)
-	End Function
-	
 	Method SetVolume(vol:Float)
 		vol = Max(Min(vol, 1), 0)
 		SetChannelVolume(_channel, vol)
+		_volumeslider.SetSliderPercentage(1 - vol)
 		_volume = vol
 	End Method
 	
 	Method SetSpeedMulti(multi:Float)
 		_speedmulti = Min(Max(multi, 0), 3)
+		_speedslider.SetSliderPercentage((multi) / 3)
 	End Method
+	
+	Method SetX(nx:Int)
+		numpad.SetPosition(numpad.GetX() + nx - x, numpad.GetY())
+		_volumeslider.SetPosition(w + w * (1 / 5.0) + (nx / 2.0), h / 2.4)
+		_speedslider.SetPosition(w + w * (2 / 5.0) + (nx / 2.0), h / 2.4)
+		Self.x = nx
+	End Method
+	
+	Function PadCallback(evt:piEvent, context:Object)
+		Local g:piGame = piGame(context)
+		g.PadEvent(evt)
+	End Function
 	
 	Function SliderCallback(evt:piEvent, context:Object)
 		Local g:piGame = piGame(context)
