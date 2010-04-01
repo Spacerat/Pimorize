@@ -156,7 +156,9 @@ Type piGame Extends TMemoryGame
 		'About text
 		SetImageFont(_tinyfont)
 		SetColor(200, 200, 200)
-		joe.advtext.DrawParsedText("<gray>PiMorize<colour=default>by Joseph <gray>'Spacerat'<colour=default> Atkins-Turkish", w + x + 20, h - 30, GraphicsWidth() - w - x - 40)
+		If (GraphicsWidth() - (w + x)) > 94
+			joe.advtext.DrawParsedText("<gray>PiMorize<colour=default> by Joseph <gray>'Spacerat'<colour=default> Atkins-Turkish", w + x + 20, h - 40, GraphicsWidth() - w - x - 40)
+		EndIf
 	End Method
 	
 	Method NextLevel()
